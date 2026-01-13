@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Story For You</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* STARS BACKGROUND */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* LOGIN SCREEN */
+        .login-screen {
+            text-align: center;
+            animation: fadeIn 1s ease;
+        }
+
+        .profile-container {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .profile-ring {
+            width: 180px;
+            height: 180px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            position: relative;
+            animation: rotate 10s linear infinite;
+        }
+
+        .profile-ring::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 4px solid transparent;
+            border-top-color: #fff;
+            border-right-color: #fff;
+        }
+
+        .profile-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .profile-image img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .login-title {
+            color: white;
+            font-size: 2em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .login-btn {
+            padding: 15px 50px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            border-radius: 50px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            font-family: 'Courier New', monospace;
+        }
+
+        .login-btn:hover {
+            background: white;
+            color: #667eea;
+            transform: scale(1.05);
+        }
+
+        /* GAME DIALOG BOX */
+        .game-container {
+            display: none;
+            width: 90%;
+            max-width: 800px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .dialog-box {
+            background: rgba(20, 20, 40, 0.95);
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+        .dialog-text {
+            color: white;
+            font-size: 1.4em;
+            line-height: 1.8;
+            min-height: 200px;
+            margin-bottom: 30px;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 12px;
+            height: 24px;
+            background: white;
+            margin-left: 5px;
+            animation: blink 0.7s infinite;
+        }
+
+        @keyframes blink {
+            0%, 49% { opacity: 1; }
+            50%, 100% { opacity: 0; }
+        }
+
+        .skip-hint {
+            position: absolute;
+            bottom: 15px;
+            right: 30px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9em;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .page-indicator {
+            text-align: center;
+            margin-top: 20px;
+            color: white;
+            font-size: 1em;
+            opacity: 0.7;
+        }
+
+        /* ANIMATIONS */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .dialog-box {
+                padding: 25px;
+            }
+
+            .dialog-text {
+                font-size: 1.1em;
+                min-height: 150px;
+            }
+
+            .login-title {
+                font-size: 1.5em;
+            }
+
+            .profile-ring {
+                width: 150px;
+                height: 150px;
+            }
+
+            .profile-image {
+                width: 120px;
+                height: 120px;
+                font-size: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- STARS BACKGROUND -->
+    <div class="stars" id="stars"></div>
+
+    <!-- LOGIN SCREEN -->
+    <div class="login-screen" id="loginScreen">
+        <div class="profile-container">
+            <div class="profile-ring">
+                <div class="profile-image" id="profileImage">
+                    💙
+                </div>
+            </div>
+        </div>
+        <h1 class="login-title">A Story For You</h1>
+        <button class="login-btn" onclick="startStory()">Enter</button>
+    </div>
+
+    <!-- GAME DIALOG -->
+    <div class="game-container" id="gameContainer">
+        <div class="dialog-box">
+            <div class="dialog-text" id="dialogText"></div>
+            <div class="skip-hint">Press ENTER to continue</div>
+        </div>
+        <div class="page-indicator" id="pageIndicator"></div>
+    </div>
+
+    <script>
+        // CONFIGURATION - EDIT YOUR STORY HERE
+        const stories = [
+            {
+                text: "Hai... Aku tahu ini mungkin terdengar random, tapi aku pengen cerita sesuatu ke kamu.",
+                speed: 50
+            },
+            {
+                text: "Kadang aku mikir, kenapa ya kita bisa ketemu? Dari sekian banyak orang, kenapa harus kamu yang bikin aku penasaran?",
+                speed: 50
+            },
+            {
+                text: "Setiap kali ngobrol sama kamu, rasanya ada yang beda. Nyaman gitu. Kayak... aku bisa jadi diri aku sendiri.",
+                speed: 50
+            },
+            {
+                text: "Aku gak tau ini perasaan apa. Yang jelas, setiap kali kamu chat atau ngomong, aku selalu nunggu dengan excited.",
+                speed: 50
+            },
+            {
+                text: "Maybe this sounds weird, tapi aku appreciate banget kehadiran kamu di hidup aku.",
+                speed: 50
+            },
+            {
+                text: "Aku gak maksa kamu buat ngerti atau bahkan ngerasain hal yang sama. Aku cuma pengen kamu tahu aja.",
+                speed: 50
+            },
+            {
+                text: "Whatever happens next, I hope we can still be cool with each other. You're important to me.",
+                speed: 50
+            },
+            {
+                text: "Thanks udah baca sampe sini. Take care, okay? 💙",
+                speed: 50
+            }
+        ];
+
+        // PROFILE IMAGE URL - Ganti dengan link gambar kamu
+        const profileImageURL = ""; // Contoh: "https://example.com/photo.jpg"
+
+        let currentPage = 0;
+        let isTyping = false;
+        let fullText = "";
+        let currentCharIndex = 0;
+        let typingInterval;
+
+        // CREATE STARS
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // SET PROFILE IMAGE
+        function setProfileImage() {
+            const profileImage = document.getElementById('profileImage');
+            if (profileImageURL) {
+                profileImage.innerHTML = `<img src="${profileImageURL}" alt="Profile">`;
+            }
+        }
+
+        // START STORY
+        function startStory() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('gameContainer').style.display = 'block';
+            showPage(0);
+        }
+
+        // SHOW PAGE
+        function showPage(pageIndex) {
+            if (pageIndex >= stories.length) {
+                // Story ended
+                document.getElementById('dialogText').innerHTML = fullText + '<br><br><span style="text-align: center; display: block;">~ The End ~</span>';
+                document.getElementById('pageIndicator').textContent = '';
+                return;
+            }
+
+            currentPage = pageIndex;
+            fullText = stories[pageIndex].text;
+            currentCharIndex = 0;
+            isTyping = true;
+
+            document.getElementById('dialogText').innerHTML = '';
+            document.getElementById('pageIndicator').textContent = `${pageIndex + 1} / ${stories.length}`;
+
+            typeText();
+        }
+
+        // TYPING EFFECT
+        function typeText() {
+            const dialogText = document.getElementById('dialogText');
+            
+            if (currentCharIndex < fullText.length) {
+                dialogText.innerHTML = fullText.substring(0, currentCharIndex + 1) + '<span class="cursor"></span>';
+                currentCharIndex++;
+                
+                typingInterval = setTimeout(typeText, stories[currentPage].speed);
+            } else {
+                dialogText.innerHTML = fullText;
+                isTyping = false;
+            }
+        }
+
+        // SKIP TYPING
+        function skipTyping() {
+            if (isTyping) {
+                clearTimeout(typingInterval);
+                document.getElementById('dialogText').innerHTML = fullText;
+                isTyping = false;
+            } else {
+                // Go to next page
+                showPage(currentPage + 1);
+            }
+        }
+
+        // KEYBOARD EVENTS
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                if (document.getElementById('gameContainer').style.display === 'block') {
+                    skipTyping();
+                }
+            }
+        });
+
+        // CLICK TO SKIP (for mobile)
+        document.getElementById('gameContainer').addEventListener('click', () => {
+            skipTyping();
+        });
+
+        // INIT
+        createStars();
+        setProfileImage();
+    </script>
+</body>
+</html>
