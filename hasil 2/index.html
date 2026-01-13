@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cerita Untukmu</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
+        
+        body {
+            background-color: #0f172a;
+            color: #f1f5f9;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+        
+        /* Menu Login dengan efek berputar */
+        #login-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            transition: opacity 0.8s ease;
+        }
+        
+        .login-container {
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            max-width: 400px;
+            width: 90%;
+            border: 1px solid #334155;
+        }
+        
+        .profile-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: 0 auto 25px;
+            overflow: hidden;
+            border: 4px solid #7c3aed;
+            animation: spin 10s linear infinite;
+            box-shadow: 0 0 20px rgba(124, 58, 237, 0.5);
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .profile-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .login-title {
+            font-size: 28px;
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, #7c3aed, #ec4899);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .login-input {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 15px 0;
+            background-color: #1e293b;
+            border: 1px solid #475569;
+            border-radius: 10px;
+            color: #f1f5f9;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s;
+        }
+        
+        .login-input:focus {
+            border-color: #7c3aed;
+            box-shadow: 0 0 10px rgba(124, 58, 237, 0.5);
+        }
+        
+        .login-btn {
+            background: linear-gradient(90deg, #7c3aed, #ec4899);
+            color: white;
+            border: none;
+            padding: 14px 30px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            width: 100%;
+        }
+        
+        .login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(124, 58, 237, 0.4);
+        }
+        
+        /* Konten utama */
+        #content {
+            display: none;
+            max-width: 800px;
+            width: 100%;
+        }
+        
+        .game-container {
+            background-color: #1e293b;
+            border-radius: 15px;
+            padding: 30px;
+            border: 1px solid #334155;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            min-height: 500px;
+        }
+        
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #334155;
+        }
+        
+        .game-title {
+            font-size: 24px;
+            font-weight: bold;
+            background: linear-gradient(90deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .game-status {
+            font-size: 14px;
+            color: #94a3b8;
+        }
+        
+        .page-counter {
+            font-size: 14px;
+            color: #7c3aed;
+            background-color: rgba(124, 58, 237, 0.1);
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+        
+        .text-display {
+            background-color: #0f172a;
+            border: 1px solid #475569;
+            border-radius: 10px;
+            padding: 25px;
+            min-height: 300px;
+            font-size: 18px;
+            line-height: 1.6;
+            letter-spacing: 0.5px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .text-cursor {
+            display: inline-block;
+            width: 8px;
+            height: 20px;
+            background-color: #60a5fa;
+            margin-left: 5px;
+            vertical-align: middle;
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        .typing-text {
+            opacity: 0;
+        }
+        
+        .typed-text {
+            color: #f1f5f9;
+            margin-bottom: 15px;
+        }
+        
+        .skip-instruction {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 14px;
+            margin-top: 15px;
+            padding: 10px;
+            border-top: 1px solid #334155;
+        }
+        
+        .skip-instruction i {
+            color: #7c3aed;
+            margin-right: 8px;
+        }
+        
+        /* Navigasi Pages */
+        .page-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #334155;
+        }
+        
+        .nav-btn {
+            background-color: #1e293b;
+            color: #60a5fa;
+            border: 1px solid #475569;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .nav-btn:hover:not(:disabled) {
+            background-color: #7c3aed;
+            color: white;
+            border-color: #7c3aed;
+        }
+        
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .next-page-btn {
+            background: linear-gradient(90deg, #7c3aed, #ec4899);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+            display: none;
+            width: 100%;
+        }
+        
+        .next-page-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(124, 58, 237, 0.4);
+        }
+        
+        /* Efik pixel game */
+        .pixel-border {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+        
+        .pixel-border:before, .pixel-border:after {
+            content: '';
+            position: absolute;
+            background-color: #7c3aed;
+        }
+        
+        .pixel-border:before {
+            width: 5px;
+            height: 20px;
+            top: -10px;
+            left: 20px;
+            box-shadow: 
+                30px 0 0 #7c3aed,
+                60px 0 0 #7c3aed,
+                90px 0 0 #7c3aed,
+                120px 0 0 #7c3aed,
+                150px 0 0 #7c3aed,
+                180px 0 0 #7c3aed,
+                210px 0 0 #7c3aed,
+                240px 0 0 #7c3aed,
+                270px 0 0 #7c3aed,
+                300px 0 0 #7c3aed,
+                330px 0 0 #7c3aed,
+                360px 0 0 #7c3aed,
+                390px 0 0 #7c3aed,
+                420px 0 0 #7c3aed,
+                450px 0 0 #7c3aed,
+                480px 0 0 #7c3aed,
+                510px 0 0 #7c3aed,
+                540px 0 0 #7c3aed,
+                570px 0 0 #7c3aed,
+                600px 0 0 #7c3aed,
+                630px 0 0 #7c3aed,
+                660px 0 0 #7c3aed,
+                690px 0 0 #7c3aed,
+                720px 0 0 #7c3aed;
+        }
+        
+        /* Responsif */
+        @media (max-width: 768px) {
+            .game-container {
+                padding: 20px;
+                min-height: 450px;
+            }
+            
+            .text-display {
+                padding: 15px;
+                font-size: 16px;
+                min-height: 250px;
+            }
+            
+            .login-container {
+                padding: 25px;
+            }
+            
+            .profile-circle {
+                width: 120px;
+                height: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Menu Login dengan gambar berputar -->
+    <div id="login-menu">
+        <div class="login-container">
+            <div class="profile-circle">
+                <!-- Ganti dengan URL gambar profil Anda -->
+                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80" alt="Foto Profil" class="profile-img">
+            </div>
+            <h1 class="login-title">Cerita Untukmu</h1>
+            <p style="color: #94a3b8; margin-bottom: 20px;">Masukkan nama untuk melanjutkan...</p>
+            <input type="text" id="username" class="login-input" placeholder="Nama kamu...">
+            <button id="login-btn" class="login-btn">Mulai Membaca</button>
+        </div>
+    </div>
+    
+    <!-- Konten utama dengan multiple pages -->
+    <div id="content">
+        <div class="game-container">
+            <div class="pixel-border"></div>
+            
+            <div class="game-header">
+                <div class="game-title">CHAPTER <span id="chapter-number">01</span></div>
+                <div class="game-status" id="game-status">TYPING...</div>
+                <div class="page-counter">PAGE <span id="current-page">1</span>/<span id="total-pages">4</span></div>
+            </div>
+            
+            <div class="text-display" id="text-display">
+                <!-- Teks akan ditampilkan di sini dengan efek typing -->
+            </div>
+            
+            <div class="skip-instruction">
+                <i class="fas fa-keyboard"></i> Tekan <strong>ENTER</strong> untuk skip animasi
+            </div>
+            
+            <button id="next-page-btn" class="next-page-btn">
+                <i class="fas fa-arrow-right"></i> Lanjut ke Halaman Berikutnya
+            </button>
+            
+            <div class="page-navigation">
+                <button id="prev-page-btn" class="nav-btn" disabled>
+                    <i class="fas fa-arrow-left"></i> Sebelumnya
+                </button>
+                <button id="next-page-nav-btn" class="nav-btn">
+                    Berikutnya <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Data cerita dengan multiple pages
+        const storyPages = [
+            // Page 1
+            [
+                "Hai, [Nama]...",
+                "Aku cuma mau bilang sesuatu yang udah lama aku simpen.",
+                "Sejak pertama kali kita ngobrol, aku selalu ngerasa ada yang beda.",
+                "Bukan sesuatu yang lebay atau berlebihan...",
+                "Tapi lebih ke perasaan nyaman kalau lagi ngobrol sama kamu."
+            ],
+            
+            // Page 2
+            [
+                "Kayak ada sesuatu yang bikin hari-hari jadi lebih cerah.",
+                "Aku suka cara kamu mikir, cara kamu ngeliat dunia...",
+                "Dan cara kamu ngejalanin hidup dengan santai tapi pasti.",
+                "Kadang aku cuma pengen jadi orang yang bisa selalu ada buat kamu.",
+                "Tapi aku juga gak mau bikin kamu risih atau ngerasa aneh."
+            ],
+            
+            // Page 3
+            [
+                "Jadi ini cuma pengakuan sederhana aja...",
+                "Kalau aku bersyukur banget bisa kenal kamu.",
+                "Dan kalau suatu hari nanti...",
+                "Kita bisa lebih deket dari sekedar teman...",
+                "Aku akan tunggu dengan sabar."
+            ],
+            
+            // Page 4
+            [
+                "Tapi yang penting sekarang, kamu tahu perasaanku.",
+                "Terima kasih udah jadi bagian dari hariku.",
+                "Hanya ingin kamu tahu, bahwa kehadiranmu sangat berarti.",
+                "Aku menghargai setiap momen yang kita lewati bersama.",
+                "- [Nama Kamu] -"
+            ]
+        ];
+        
+        // Elemen DOM
+        const loginMenu = document.getElementById('login-menu');
+        const content = document.getElementById('content');
+        const loginBtn = document.getElementById('login-btn');
+        const usernameInput = document.getElementById('username');
+        const textDisplay = document.getElementById('text-display');
+        const nextPageBtn = document.getElementById('next-page-btn');
+        const prevPageBtn = document.getElementById('prev-page-btn');
+        const nextPageNavBtn = document.getElementById('next-page-nav-btn');
+        const gameStatus = document.getElementById('game-status');
+        const chapterNumber = document.getElementById('chapter-number');
+        const currentPageSpan = document.getElementById('current-page');
+        const totalPagesSpan = document.getElementById('total-pages');
+        
+        // Variabel kontrol
+        let currentPage = 0;
+        let currentLine = 0;
+        let currentChar = 0;
+        let isTyping = false;
+        let typingSpeed = 50; // ms per karakter
+        let userDisplayName = "";
+        let yourName = "Seseorang"; // Ganti dengan namamu
+        
+        // Inisialisasi total pages
+        totalPagesSpan.textContent = storyPages.length;
+        
+        // Fungsi untuk memuat halaman
+        function loadPage(pageIndex) {
+            if (pageIndex < 0 || pageIndex >= storyPages.length) return;
+            
+            // Update current page
+            currentPage = pageIndex;
+            currentLine = 0;
+            currentChar = 0;
+            
+            // Update UI
+            currentPageSpan.textContent = currentPage + 1;
+            chapterNumber.textContent = String(currentPage + 1).padStart(2, '0');
+            
+            // Kosongkan text display
+            textDisplay.innerHTML = '';
+            
+            // Update tombol navigasi
+            prevPageBtn.disabled = currentPage === 0;
+            
+            // Sembunyikan next page button
+            nextPageBtn.style.display = 'none';
+            nextPageNavBtn.style.display = currentPage === storyPages.length - 1 ? 'none' : 'flex';
+            
+            // Mulai efek typing
+            typeText();
+        }
+        
+        // Fungsi untuk memulai efek typing
+        function typeText() {
+            if (currentLine >= storyPages[currentPage].length) {
+                // Halaman selesai
+                gameStatus.textContent = "COMPLETE";
+                
+                // Tampilkan tombol next page jika bukan halaman terakhir
+                if (currentPage < storyPages.length - 1) {
+                    nextPageBtn.style.display = 'block';
+                }
+                return;
+            }
+            
+            isTyping = true;
+            gameStatus.textContent = "TYPING...";
+            
+            // Ganti placeholder dengan nama pengguna
+            let text = storyPages[currentPage][currentLine];
+            text = text.replace("[Nama]", userDisplayName);
+            text = text.replace("[Nama Kamu]", yourName);
+            
+            // Tambah elemen untuk baris teks baru
+            if (currentChar === 0) {
+                const textElement = document.createElement('div');
+                textElement.className = 'typing-text';
+                textElement.id = `text-line-${currentPage}-${currentLine}`;
+                textDisplay.appendChild(textElement);
+            }
+            
+            const textElement = document.getElementById(`text-line-${currentPage}-${currentLine}`);
+            
+            // Tambahkan karakter satu per satu
+            if (currentChar < text.length) {
+                // Efek suara ketikan (visual)
+                if (currentChar % 3 === 0) {
+                    textElement.style.opacity = "0.9";
+                    setTimeout(() => {
+                        textElement.style.opacity = "1";
+                    }, 50);
+                }
+                
+                textElement.innerHTML = text.substring(0, currentChar + 1) + '<span class="text-cursor"></span>';
+                currentChar++;
+                
+                // Acak kecepatan ketikan sedikit untuk efek realistis
+                const randomSpeed = typingSpeed + Math.random() * 30 - 15;
+                setTimeout(typeText, randomSpeed);
+            } else {
+                // Selesai mengetik baris ini
+                textElement.innerHTML = text;
+                textElement.classList.remove('typing-text');
+                textElement.classList.add('typed-text');
+                
+                isTyping = false;
+                currentLine++;
+                currentChar = 0;
+                
+                // Tunggu sebentar sebelum mulai baris berikutnya
+                setTimeout(() => {
+                    if (currentLine < storyPages[currentPage].length) {
+                        setTimeout(typeText, 500);
+                    } else {
+                        gameStatus.textContent = "COMPLETE";
+                        
+                        // Tampilkan tombol next page jika bukan halaman terakhir
+                        if (currentPage < storyPages.length - 1) {
+                            nextPageBtn.style.display = 'block';
+                        }
+                    }
+                }, 300);
+            }
+            
+            // Scroll ke bawah
+            textDisplay.scrollTop = textDisplay.scrollHeight;
+        }
+        
+        // Fungsi untuk skip animasi typing
+        function skipTyping() {
+            if (!isTyping && currentLine >= storyPages[currentPage].length) return;
+            
+            // Tampilkan semua teks sekaligus
+            while (currentLine < storyPages[currentPage].length) {
+                let text = storyPages[currentPage][currentLine];
+                text = text.replace("[Nama]", userDisplayName);
+                text = text.replace("[Nama Kamu]", yourName);
+                
+                const textElement = document.createElement('div');
+                textElement.className = 'typed-text';
+                textElement.textContent = text;
+                textDisplay.appendChild(textElement);
+                
+                currentLine++;
+            }
+            
+            isTyping = false;
+            gameStatus.textContent = "COMPLETE";
+            
+            // Tampilkan tombol next page jika bukan halaman terakhir
+            if (currentPage < storyPages.length - 1) {
+                nextPageBtn.style.display = 'block';
+            }
+            
+            // Hapus kursor
+            const cursor = document.querySelector('.text-cursor');
+            if (cursor) cursor.style.display = 'none';
+            
+            // Scroll ke bawah
+            textDisplay.scrollTop = textDisplay.scrollHeight;
+        }
+        
+        // Fungsi untuk pindah ke halaman berikutnya
+        function goToNextPage() {
+            if (currentPage < storyPages.length - 1) {
+                loadPage(currentPage + 1);
+            }
+        }
+        
+        // Fungsi untuk pindah ke halaman sebelumnya
+        function goToPrevPage() {
+            if (currentPage > 0) {
+                loadPage(currentPage - 1);
+            }
+        }
+        
+        // Event listener untuk login
+        loginBtn.addEventListener('click', function() {
+            const username = usernameInput.value.trim();
+            
+            if (username) {
+                userDisplayName = username;
+                
+                // Animasi fade out untuk menu login
+                loginMenu.style.opacity = '0';
+                
+                setTimeout(() => {
+                    loginMenu.style.display = 'none';
+                    content.style.display = 'block';
+                    
+                    // Mulai efek typing setelah login
+                    setTimeout(() => {
+                        loadPage(0);
+                    }, 500);
+                }, 800);
+            } else {
+                usernameInput.style.borderColor = '#ef4444';
+                usernameInput.style.boxShadow = '0 0 10px rgba(239, 68, 68, 0.5)';
+                usernameInput.placeholder = "Masukkan nama dulu ya...";
+                
+                setTimeout(() => {
+                    usernameInput.style.borderColor = '#475569';
+                    usernameInput.style.boxShadow = 'none';
+                }, 2000);
+            }
+        });
+        
+        // Juga bisa login dengan tekan Enter di input username
+        usernameInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                loginBtn.click();
+            }
+        });
+        
+        // Event listener untuk skip dengan tombol Enter
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && content.style.display === 'block') {
+                // Jika sudah selesai typing, pindah ke halaman berikutnya
+                if (!isTyping && currentLine >= storyPages[currentPage].length) {
+                    if (currentPage < storyPages.length - 1) {
+                        goToNextPage();
+                    }
+                } else {
+                    skipTyping();
+                }
+            }
+            
+            // Panah kiri/kanan untuk navigasi
+            if (e.key === 'ArrowLeft') {
+                goToPrevPage();
+            } else if (e.key === 'ArrowRight') {
+                if (!isTyping || currentLine >= storyPages[currentPage].length) {
+                    goToNextPage();
+                } else {
+                    skipTyping();
+                }
+            }
+        });
+        
+        // Event listener untuk tombol navigasi
+        nextPageBtn.addEventListener('click', goToNextPage);
+        nextPageNavBtn.addEventListener('click', function() {
+            if (!isTyping || currentLine >= storyPages[currentPage].length) {
+                goToNextPage();
+            } else {
+                skipTyping();
+            }
+        });
+        prevPageBtn.addEventListener('click', goToPrevPage);
+        
+        // Efek visual tambahan untuk input login
+        usernameInput.addEventListener('focus', function() {
+            this.style.borderColor = '#7c3aed';
+            this.style.boxShadow = '0 0 10px rgba(124, 58, 237, 0.5)';
+        });
+        
+        usernameInput.addEventListener('blur', function() {
+            this.style.borderColor = '#475569';
+            this.style.boxShadow = 'none';
+        });
+        
+        // Tambahan: Klik pada text display untuk skip
+        textDisplay.addEventListener('click', function() {
+            if (isTyping) {
+                skipTyping();
+            } else if (currentLine >= storyPages[currentPage].length && currentPage < storyPages.length - 1) {
+                goToNextPage();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <title>Story Mode</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Courier New', monospace;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: #e5e7eb;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .login, .game {
+      width: 80%;
+      max-width: 700px;
+      background: rgba(0,0,0,0.5);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 0 40px rgba(0,0,0,0.5);
+    }
+
+    .login {
+      text-align: center;
+    }
+
+    .login h1 {
+      margin-bottom: 16px;
+    }
+
+    .spinner {
+      width: 80px;
+      height: 80px;
+      margin: 24px auto;
+      border: 6px solid #3b82f6;
+      border-top: 6px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .hidden { display: none; }
+
+    .text-box {
+      min-height: 200px;
+      font-size: 18px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+
+    .hint {
+      margin-top: 16px;
+      font-size: 14px;
+      color: #9ca3af;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN SCREEN -->
+  <div class="login" id="login">
+    <h1>Memuat Cerita...</h1>
+    <div class="spinner"></div>
+    <p>Silakan tunggu</p>
+  </div>
+
+  <!-- GAME SCREEN -->
+  <div class="game hidden" id="game">
+    <div class="text-box" id="text"></div>
+    <div class="hint">Tekan ENTER untuk skip / lanjut</div>
+  </div>
+
+  <script>
+    const pages = [
+      "Hai.\n\nIni bukan website biasa.\nIni cuma tempat buat cerita dikit.",
+      "Gua sebenernya ga jago ngomong langsung.\nMakanya gua pilih cara kayak gini.",
+      "Bukan soal cinta gede-gedean.\nCuma perasaan kecil yang kepikiran terus.",
+      "Kalau lu baca ini sampai sini,\nitu aja udah cukup buat gua."
+    ];
+
+    const textEl = document.getElementById('text');
+    const loginEl = document.getElementById('login');
+    const gameEl = document.getElementById('game');
+
+    let pageIndex = 0;
+    let charIndex = 0;
+    let typing = false;
+    let interval;
+
+    function startGame() {
+      loginEl.classList.add('hidden');
+      gameEl.classList.remove('hidden');
+      typeText();
+    }
+
+    function typeText() {
+      typing = true;
+      textEl.textContent = "";
+      charIndex = 0;
+
+      interval = setInterval(() => {
+        if (charIndex < pages[pageIndex].length) {
+          textEl.textContent += pages[pageIndex][charIndex];
+          charIndex++;
+        } else {
+          clearInterval(interval);
+          typing = false;
+        }
+      }, 40); // kecepatan det det det
+    }
+
+    function skipText() {
+      clearInterval(interval);
+      textEl.textContent = pages[pageIndex];
+      typing = false;
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        if (typing) {
+          skipText();
+        } else {
+          if (pageIndex < pages.length - 1) {
+            pageIndex++;
+            typeText();
+          }
+        }
+      }
+    });
+
+    // Fake loading lalu masuk game
+    setTimeout(startGame, 2500);
+  </script>
+</body>
+</html>
