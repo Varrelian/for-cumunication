@@ -1,712 +1,345 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Kalender Pintar + Pengingat Acara</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            font-family: system-ui, 'Segoe UI', 'Poppins', 'Inter', sans-serif;
-        }
+Ini rangkuman kisi-kisi Bahasa Inggris kamu biar lebih gampang dipelajari sebelum ujian.
 
-        body {
-            background: linear-gradient(145deg, #e0eafc 0%, #cfdef3 100%);
-            margin: 0;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
+📚 Multiple Choice
 
-        /* Container utama */
-        .app-container {
-            max-width: 1300px;
-            width: 100%;
-            background: rgba(255,255,255,0.4);
-            backdrop-filter: blur(2px);
-            border-radius: 48px;
-            padding: 20px 24px 32px;
-            box-shadow: 0 25px 45px rgba(0,0,0,0.2);
-            transition: all 0.2s;
-        }
+1. Asking and Giving Opinion
 
-        /* header */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-            background: white;
-            padding: 12px 20px;
-            border-radius: 60px;
-            box-shadow: 0 5px 12px rgba(0,0,0,0.05);
-        }
-        h1 {
-            margin: 0;
-            font-size: 1.7rem;
-            background: linear-gradient(135deg, #1f2b3c, #2a3f5e);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-        }
-        .today-btn {
-            background: #2c3e66;
-            border: none;
-            padding: 8px 18px;
-            border-radius: 40px;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .today-btn:hover {
-            background: #1f2e4a;
-            transform: scale(0.97);
-        }
+Asking Opinion (meminta pendapat):
 
-        /* grid kalender + event panel */
-        .dashboard {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 24px;
-        }
-        .calendar-section {
-            flex: 2;
-            min-width: 280px;
-            background: white;
-            border-radius: 32px;
-            padding: 18px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-        .events-section {
-            flex: 1.2;
-            min-width: 280px;
-            background: white;
-            border-radius: 32px;
-            padding: 20px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-        }
+What do you think about...?
 
-        /* navigasi bulan */
-        .month-nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .month-nav button {
-            background: #eef2ff;
-            border: none;
-            font-size: 1.5rem;
-            width: 40px;
-            height: 40px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.2s;
-        }
-        .month-nav span {
-            font-weight: bold;
-            font-size: 1.4rem;
-            background: #f0f3fa;
-            padding: 6px 20px;
-            border-radius: 40px;
-        }
+What is your opinion about...?
 
-        /* grid hari */
-        .weekdays {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            text-align: center;
-            font-weight: bold;
-            color: #2c3e66;
-            margin-bottom: 12px;
-        }
-        .calendar-days {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 6px;
-        }
-        .day-cell {
-            aspect-ratio: 1 / 1;
-            background: #f9fafc;
-            border-radius: 20px;
-            padding: 8px 4px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            font-weight: 500;
-            cursor: pointer;
-            transition: 0.1s;
-            border: 1px solid transparent;
-            position: relative;
-        }
-        .day-cell:hover {
-            background: #e9edf5;
-            transform: scale(0.97);
-            border-color: #b9c4e0;
-        }
-        .day-number {
-            font-size: 1.1rem;
-            font-weight: bold;
-        }
-        .event-indicator {
-            font-size: 0.65rem;
-            background: #ffb347;
-            color: white;
-            border-radius: 30px;
-            padding: 2px 6px;
-            margin-top: 4px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 90%;
-        }
-        .today-highlight {
-            background: #ffe6b3;
-            border: 2px solid #f5a623;
-        }
-        .selected-day {
-            background: #cbdffa;
-            border: 2px solid #2c3e66;
-        }
+How do you feel about...?
 
-        /* form tambah acara */
-        .add-event {
-            background: #f4f7fe;
-            border-radius: 28px;
-            padding: 16px;
-            margin-bottom: 24px;
-        }
-        .add-event input, .add-event select, .add-event textarea {
-            width: 100%;
-            margin-bottom: 12px;
-            padding: 10px 14px;
-            border-radius: 40px;
-            border: 1px solid #ccc;
-            font-size: 0.9rem;
-        }
-        .add-event button {
-            background: #2c3e66;
-            color: white;
-            border: none;
-            width: 100%;
-            padding: 10px;
-            border-radius: 40px;
-            font-weight: bold;
-            cursor: pointer;
-        }
 
-        /* daftar acara di hari tertentu */
-        .event-list {
-            flex: 1;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-        .event-card {
-            background: #ffffff;
-            border-left: 8px solid;
-            margin-bottom: 12px;
-            padding: 10px 12px;
-            border-radius: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-        .event-title {
-            font-weight: bold;
-            font-size: 1rem;
-        }
-        .event-label {
-            font-size: 0.7rem;
-            background: #e9ecef;
-            display: inline-block;
-            padding: 2px 12px;
-            border-radius: 20px;
-            margin: 6px 0;
-        }
-        .event-actions {
-            display: flex;
-            gap: 12px;
-            margin-top: 8px;
-            align-items: center;
-        }
-        .done-btn {
-            background: #28a745;
-            border: none;
-            color: white;
-            padding: 5px 12px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-size: 0.7rem;
-        }
-        .undone-btn {
-            background: #6c757d;
-        }
-        .delete-btn {
-            background: #dc3545;
-            border: none;
-            color: white;
-            padding: 5px 12px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-size: 0.7rem;
-        }
-        .notif-badge {
-            font-size: 0.7rem;
-            background: #ffecd6;
-            border-radius: 16px;
-            padding: 4px 8px;
-            margin-top: 6px;
-            color: #b85c00;
-        }
+Giving Opinion (memberi pendapat):
 
-        .notif-panel {
-            background: #fff6e8;
-            border-radius: 28px;
-            padding: 12px;
-            margin-top: 20px;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-        .notif-title {
-            font-weight: bold;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-        }
-        hr {
-            margin: 10px 0;
-        }
-        button {
-            cursor: pointer;
-        }
-        .empty-msg {
-            color: gray;
-            text-align: center;
-            font-size: 0.85rem;
-        }
-    </style>
-</head>
-<body>
-<div class="app-container">
-    <div class="header">
-        <h1>📅 PintarCalendar ✨</h1>
-        <button class="today-btn" id="todayBtn">Hari Ini</button>
-    </div>
+I think...
 
-    <div class="dashboard">
-        <!-- KALENDER -->
-        <div class="calendar-section">
-            <div class="month-nav">
-                <button id="prevMonthBtn">◀</button>
-                <span id="monthYearDisplay"></span>
-                <button id="nextMonthBtn">▶</button>
-            </div>
-            <div class="weekdays">
-                <span>Min</span><span>Sen</span><span>Sel</span><span>Rab</span><span>Kam</span><span>Jum</span><span>Sab</span>
-            </div>
-            <div id="calendarGrid" class="calendar-days"></div>
-        </div>
+In my opinion,...
 
-        <!-- SISI KANAN: TAMBAH & DAFTAR ACARA -->
-        <div class="events-section">
-            <div class="add-event">
-                <h3>✏️ Tambah Acara / Pengingat</h3>
-                <input type="text" id="eventTitle" placeholder="Judul acara (cth: Ulang tahun Lojh)" autocomplete="off">
-                <select id="eventLabel">
-                    <option value="umum">🏷️ Umum</option>
-                    <option value="ulang tahun">🎂 Ulang Tahun</option>
-                    <option value="rapat">💼 Rapat</option>
-                    <option value="tugas">📚 Tugas</option>
-                    <option value="kesehatan">🩺 Kesehatan</option>
-                </select>
-                <textarea id="eventDesc" rows="2" placeholder="Deskripsi (opsional)"></textarea>
-                <button id="saveEventBtn">💾 Simpan Acara di Tanggal Terpilih</button>
-                <div style="font-size:12px; margin-top:8px; color:#555;">*Tanggal aktif: <strong id="selectedDateText">Belum pilih</strong></div>
-            </div>
+I believe...
 
-            <div style="display: flex; justify-content: space-between; align-items: baseline;">
-                <h3>📋 Acara pada tanggal terpilih</h3>
-                <button id="refreshEventsBtn" style="background:none; border:none; font-size:20px;">🔄</button>
-            </div>
-            <div id="eventListContainer" class="event-list">
-                <div class="empty-msg">Klik tanggal di kalender untuk lihat/edit acara</div>
-            </div>
+Personally, I think...
 
-            <!-- PANEL NOTIFIKASI -->
-            <div class="notif-panel" id="notificationPanel">
-                <div class="notif-title">🔔 Pengingat & Notifikasi</div>
-                <div id="notifMessages">Memuat notifikasi...</div>
-            </div>
-        </div>
-    </div>
-</div>
 
-<script>
-    // ---------- DATA STORAGE (LocalStorage) ----------
-    let events = []; // setiap event: { id, dateStr, title, label, description, done, createdAt }
-    let currentDate = new Date(); // untuk navigasi bulan
-    let selectedDateStr = new Date().toISOString().split('T')[0]; // hari ini default
 
-    // DOM elements
-    const calendarGrid = document.getElementById('calendarGrid');
-    const monthYearDisplay = document.getElementById('monthYearDisplay');
-    const selectedDateText = document.getElementById('selectedDateText');
-    const eventListContainer = document.getElementById('eventListContainer');
-    const saveEventBtn = document.getElementById('saveEventBtn');
-    const eventTitleInput = document.getElementById('eventTitle');
-    const eventLabelSelect = document.getElementById('eventLabel');
-    const eventDescInput = document.getElementById('eventDesc');
-    const notifMessagesDiv = document.getElementById('notifMessages');
-    const refreshEventsBtn = document.getElementById('refreshEventsBtn');
+2. Giving Suggestion
 
-    // helper: format YYYY-MM-DD
-    function formatDateStr(date) {
-        let y = date.getFullYear();
-        let m = String(date.getMonth() + 1).padStart(2, '0');
-        let d = String(date.getDate()).padStart(2, '0');
-        return `${y}-${m}-${d}`;
-    }
+You should...
 
-    // load & save
-    function loadEvents() {
-        const stored = localStorage.getItem('smart_calendar_events');
-        if (stored) {
-            events = JSON.parse(stored);
-        } else {
-            // contoh data dummy biar menarik
-            const today = formatDateStr(new Date());
-            const tomorrowDate = new Date();
-            tomorrowDate.setDate(tomorrowDate.getDate() + 1);
-            const tomorrowStr = formatDateStr(tomorrowDate);
-            events = [
-                { id: Date.now()+1, dateStr: today, title: "Meeting Proyek", label: "rapat", description: "Diskusi final", done: false, createdAt: Date.now() },
-                { id: Date.now()+2, dateStr: tomorrowStr, title: "Ulang tahun Lojh 🎉", label: "ulang tahun", description: "Jangan lupa kado!", done: false, createdAt: Date.now() },
-                { id: Date.now()+3, dateStr: tomorrowStr, title: "Pengingat belanja", label: "umum", description: "Beli kue", done: true, createdAt: Date.now() }
-            ];
-            saveEvents();
-        }
-        renderNotifications(); // setiap load refresh notif
-    }
-    function saveEvents() {
-        localStorage.setItem('smart_calendar_events', JSON.stringify(events));
-        renderCalendar();   // refresh tampilan kalender (indikator titik)
-        renderEventsOnSelected(); // refresh daftar acara di selected day
-        renderNotifications(); // notifikasi selalu update
-    }
+You ought to...
 
-    // ---- NOTIFIKASI cerdas: label ulang tahun 1 hari sebelumnya, semua event lain diingatkan H-1 juga + hari H
-    function generateNotifications() {
-        const today = new Date();
-        today.setHours(0,0,0,0);
-        const todayStr = formatDateStr(today);
-        
-        const tomorrowDate = new Date(today);
-        tomorrowDate.setDate(today.getDate() + 1);
-        const tomorrowStr = formatDateStr(tomorrowDate);
-        
-        // kumpulan pesan notifikasi
-        let notifs = [];
-        
-        // loop semua events
-        events.forEach(ev => {
-            const evDate = new Date(ev.dateStr + 'T00:00:00');
-            const evDateOnly = new Date(ev.dateStr);
-            evDateOnly.setHours(0,0,0,0);
-            const diffDays = Math.floor((evDateOnly - today) / (1000 * 60 * 60 * 24));
-            
-            // Notifikasi H-1 (besok ada acara)
-            if (diffDays === 1) {
-                // khusus label "ulang tahun" punya ucapan khas, tapi semuanya akan diingatkan
-                let prefix = "";
-                if (ev.label === "ulang tahun") {
-                    prefix = "🎂 BESOK ULANG TAHUN! ";
-                } else {
-                    prefix = "⏰ Pengingat H-1: ";
-                }
-                notifs.push({
-                    id: ev.id,
-                    message: `${prefix} "${ev.title}" (${ev.label}) besok, ${ev.dateStr}. ${ev.description ? "Catatan: "+ev.description : ""} Jangan lupa persiapkan!`,
-                    type: "reminder",
-                    eventId: ev.id,
-                    dateHint: ev.dateStr
-                });
-            }
-            
-            // Notifikasi Hari H (hari ini juga)
-            if (diffDays === 0) {
-                let doneStatus = ev.done ? "✅ SUDAH DILAKSANAKAN" : "❌ BELUM DILAKSANAKAN";
-                let msg = `🔔 HARI INI: "${ev.title}" (${ev.label}) - ${ev.description || "Tidak ada deskripsi"}. Status: ${doneStatus}`;
-                if (!ev.done) {
-                    msg += " → Jangan lewatkan acara ini ya!";
-                } else {
-                    msg += " (Anda sudah tandai selesai)";
-                }
-                notifs.push({
-                    id: ev.id,
-                    message: msg,
-                    type: "today",
-                    eventId: ev.id,
-                    done: ev.done
-                });
-            }
-            
-            // bonus: jika sudah lewat dan belum selesai? tidak perlu notif mengganggu, tapi optional
-            if (diffDays < 0 && !ev.done) {
-                // optional: lewat belum selesai, kasih peringatan ringan (tapi tidak wajib, sesuai kebutuhan)
-                notifs.push({
-                    id: ev.id,
-                    message: `⚠️ Acara "${ev.title}" pada ${ev.dateStr} sudah lewat dan belum ditandai selesai. Segera periksa!`,
-                    type: "overdue",
-                    eventId: ev.id
-                });
-            }
-        });
-        
-        // menghilangkan duplikat berdasarkan event id dan jenis? biarkan semua pesan penting
-        // tapi agar tidak terlalu banyak duplikat, kita filter unique message? tidak perlu karena setiap event unik
-        return notifs;
-    }
-    
-    function renderNotifications() {
-        const notifs = generateNotifications();
-        if (notifs.length === 0) {
-            notifMessagesDiv.innerHTML = '<div class="empty-msg">✨ Tidak ada pengingat untuk hari ini / besok.</div>';
-            return;
-        }
-        let html = `<div style="display:flex; flex-direction:column; gap:8px;">`;
-        notifs.forEach(notif => {
-            let bgColor = notif.type === 'today' ? '#fff0db' : '#e8f0fe';
-            html += `<div style="background:${bgColor}; border-radius:16px; padding:8px 10px; font-size:0.8rem; border-left:4px solid #f5a623;">
-                        <span>🔔 ${notif.message}</span>
-                     </div>`;
-        });
-        html += `</div>`;
-        notifMessagesDiv.innerHTML = html;
-    }
-    
-    // ---------- RENDER KALENDER ----------
-    function renderCalendar() {
-        const year = currentDate.getFullYear();
-        const month = currentDate.getMonth();
-        const firstDayOfMonth = new Date(year, month, 1);
-        const startWeekday = firstDayOfMonth.getDay(); // 0 minggu
-        const daysInMonth = new Date(year, month + 1, 0).getDate();
-        
-        let todayDate = new Date();
-        todayDate.setHours(0,0,0,0);
-        const todayStr = formatDateStr(todayDate);
-        
-        let calendarHTML = '';
-        let dayCounter = 1;
-        const totalCells = 42; // 6 baris
-        
-        for (let i = 0; i < totalCells; i++) {
-            if (i < startWeekday || dayCounter > daysInMonth) {
-                calendarHTML += `<div class="day-cell" style="background:#f1f3f8; opacity:0.5;"></div>`;
-                continue;
-            }
-            const currentCellDate = new Date(year, month, dayCounter);
-            const dateStrCell = formatDateStr(currentCellDate);
-            const eventsToday = events.filter(ev => ev.dateStr === dateStrCell);
-            const isToday = (dateStrCell === todayStr);
-            const isSelected = (dateStrCell === selectedDateStr);
-            
-            let indicatorHtml = '';
-            if (eventsToday.length > 0) {
-                // tampilkan label singkat acara pertama
-                let labelShort = eventsToday[0].label.substring(0,8);
-                indicatorHtml = `<div class="event-indicator">📌 ${labelShort}${eventsToday.length>1 ? ` +${eventsToday.length-1}` : ''}</div>`;
-            }
-            
-            let additionalClass = '';
-            if (isToday) additionalClass += ' today-highlight';
-            if (isSelected) additionalClass += ' selected-day';
-            
-            calendarHTML += `
-                <div class="day-cell${additionalClass}" data-date="${dateStrCell}">
-                    <div class="day-number">${dayCounter}</div>
-                    ${indicatorHtml}
-                </div>
-            `;
-            dayCounter++;
-        }
-        calendarGrid.innerHTML = calendarHTML;
-        monthYearDisplay.innerText = new Intl.DateTimeFormat('id-ID', { month: 'long', year: 'numeric' }).format(currentDate);
-        
-        // attach event listeners ke setiap cell
-        document.querySelectorAll('.day-cell[data-date]').forEach(cell => {
-            cell.addEventListener('click', (e) => {
-                const dateVal = cell.getAttribute('data-date');
-                if (dateVal) {
-                    selectedDateStr = dateVal;
-                    updateSelectedDateDisplay();
-                    renderEventsOnSelected();
-                    renderCalendar(); // re-render untuk highlight baru
-                }
-                e.stopPropagation();
-            });
-        });
-    }
-    
-    function updateSelectedDateDisplay() {
-        const [y,m,d] = selectedDateStr.split('-');
-        selectedDateText.innerText = `${d}/${m}/${y}`;
-    }
-    
-    // menampilkan acara di selectedDateStr
-    function renderEventsOnSelected() {
-        if (!selectedDateStr) {
-            eventListContainer.innerHTML = '<div class="empty-msg">Pilih tanggal dulu</div>';
-            return;
-        }
-        const filtered = events.filter(ev => ev.dateStr === selectedDateStr).sort((a,b)=> a.createdAt - b.createdAt);
-        if (filtered.length === 0) {
-            eventListContainer.innerHTML = '<div class="empty-msg">✨ Tidak ada acara. Tambahkan sekarang!</div>';
-            return;
-        }
-        let html = '';
-        filtered.forEach(ev => {
-            const doneClass = ev.done ? 'style="opacity:0.7; background:#e0ffe0;"' : '';
-            html += `
-                <div class="event-card" style="border-left-color: ${getLabelColor(ev.label)}" ${doneClass}>
-                    <div class="event-title">📌 ${escapeHtml(ev.title)} ${ev.done ? '✅' : '⏳'}</div>
-                    <div class="event-label">🏷️ ${ev.label}</div>
-                    <div style="font-size:0.75rem; color:#444;">📝 ${escapeHtml(ev.description) || 'Tidak ada deskripsi'}</div>
-                    <div class="event-actions">
-                        ${!ev.done ? `<button class="done-btn" data-id="${ev.id}">✔️ Sudah</button>` : `<button class="undone-btn done-btn" data-id="${ev.id}" style="background:#ffc107; color:#333;">↩️ Batalkan sudah</button>`}
-                        <button class="delete-btn" data-id="${ev.id}">🗑 Hapus</button>
-                    </div>
-                </div>
-            `;
-        });
-        eventListContainer.innerHTML = html;
-        
-        // attach event untuk tombol done/undone dan delete
-        document.querySelectorAll('.done-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const id = parseInt(btn.getAttribute('data-id'));
-                const eventIdx = events.findIndex(ev => ev.id === id);
-                if (eventIdx !== -1) {
-                    events[eventIdx].done = !events[eventIdx].done;
-                    saveEvents();
-                    renderEventsOnSelected();
-                    renderNotifications();
-                }
-                e.stopPropagation();
-            });
-        });
-        document.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const id = parseInt(btn.getAttribute('data-id'));
-                events = events.filter(ev => ev.id !== id);
-                saveEvents();
-                renderEventsOnSelected();
-                renderNotifications();
-                e.stopPropagation();
-            });
-        });
-    }
-    
-    function getLabelColor(label) {
-        switch(label) {
-            case 'ulang tahun': return '#ff8c42';
-            case 'rapat': return '#3b82f6';
-            case 'tugas': return '#10b981';
-            case 'kesehatan': return '#ef4444';
-            default: return '#9ca3af';
-        }
-    }
-    
-    function escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/[&<>]/g, function(m) {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
-        });
-    }
-    
-    // tambah event baru pada selectedDateStr
-    function addNewEvent() {
-        const title = eventTitleInput.value.trim();
-        if (!title) {
-            alert("Masukkan judul acara!");
-            return;
-        }
-        if (!selectedDateStr) {
-            alert("Pilih tanggal di kalender terlebih dahulu.");
-            return;
-        }
-        const newEvent = {
-            id: Date.now(),
-            dateStr: selectedDateStr,
-            title: title,
-            label: eventLabelSelect.value,
-            description: eventDescInput.value.trim() || "",
-            done: false,
-            createdAt: Date.now()
-        };
-        events.push(newEvent);
-        saveEvents();
-        // reset form
-        eventTitleInput.value = "";
-        eventDescInput.value = "";
-        eventLabelSelect.value = "umum";
-        renderEventsOnSelected();
-        renderNotifications();
-        alert(`Acara "${title}" ditambahkan di ${selectedDateStr}`);
-    }
-    
-    // navigasi bulan
-    function prevMonth() {
-        currentDate.setMonth(currentDate.getMonth() - 1);
-        renderCalendar();
-    }
-    function nextMonth() {
-        currentDate.setMonth(currentDate.getMonth() + 1);
-        renderCalendar();
-    }
-    function goToday() {
-        currentDate = new Date();
-        selectedDateStr = formatDateStr(currentDate);
-        renderCalendar();
-        updateSelectedDateDisplay();
-        renderEventsOnSelected();
-    }
-    
-    // init
-    function init() {
-        loadEvents();
-        renderCalendar();
-        updateSelectedDateDisplay();
-        renderEventsOnSelected();
-        // event listeners
-        document.getElementById('prevMonthBtn').addEventListener('click', prevMonth);
-        document.getElementById('nextMonthBtn').addEventListener('click', nextMonth);
-        document.getElementById('todayBtn').addEventListener('click', goToday);
-        saveEventBtn.addEventListener('click', addNewEvent);
-        refreshEventsBtn.addEventListener('click', () => {
-            renderEventsOnSelected();
-            renderNotifications();
-        });
-        // setiap kali ada perubahan notif, juga bisa panggil render secara berkala? cukup dari saveEvents
-        setInterval(() => {
-            renderNotifications();
-        }, 60000); // setiap 1 menit cek ulang notif (misal tanggal berubah)
-        // juga cek perubahan hari jika aplikasi terbuka lama
-        window.addEventListener('focus', () => {
-            renderNotifications();
-            renderCalendar();
-        });
-    }
-    
-    init();
-</script>
-</body>
-</html>
+Why don't you...?
+
+How about + V-ing...?
+
+I suggest that you...
+
+
+3. Expressions of Asking Opinion
+
+Contoh:
+
+What do you think?
+
+Do you agree with me?
+
+What's your idea about this?
+
+
+4. Expressions of Giving Suggestion
+
+Contoh:
+
+You'd better...
+
+I recommend that...
+
+Why don't we...?
+
+
+5. Formal Invitation
+
+Undangan resmi untuk acara formal. Bagian-bagian:
+
+Title
+
+Receiver
+
+Body (isi)
+
+Date and Time
+
+Place
+
+Sender
+
+
+Contoh:
+
+> We would like to invite you to attend our graduation ceremony...
+
+
+
+6, 13, 14, 20, 24, 27, 34, 37. Cause and Effect
+
+Cause = penyebab
+
+Effect = akibat
+
+
+Conjunctions (kata penghubung):
+
+because
+
+because of
+
+due to
+
+since
+
+therefore
+
+so
+
+thus
+
+as a result
+
+
+Contoh:
+
+It rained heavily, so the match was canceled.
+
+Cause: It rained heavily.
+
+Effect: The match was canceled.
+
+
+
+7, 19, 31, 32, 33, 35. Personal Letter
+
+Surat pribadi kepada teman atau keluarga.
+
+Parts of Personal Letter:
+
+1. Date
+
+
+2. Greeting
+
+
+3. Opening
+
+
+4. Body
+
+
+5. Closing
+
+
+6. Signature
+
+
+
+Jenis-jenis:
+
+Sympathy Letter → menyampaikan belasungkawa.
+
+Congratulation Letter → mengucapkan selamat.
+
+Apology Letter → meminta maaf.
+
+
+8, 15, 17, 26, 29. Analytical Exposition Text
+
+Tujuan: Meyakinkan pembaca bahwa sesuatu itu benar atau penting.
+
+Generic Structure:
+
+1. Thesis (pendapat utama)
+
+
+2. Arguments (alasan/dukungan)
+
+
+3. Reiteration (penegasan ulang)
+
+
+
+Ciri-ciri:
+
+Menggunakan simple present tense.
+
+Banyak memakai kata hubung seperti therefore, because, consequently.
+
+Tidak memberi saran langsung.
+
+
+16, 23, 30, 36, 38, 39. Hortatory Exposition Text
+
+Tujuan: Meyakinkan pembaca agar melakukan atau tidak melakukan sesuatu.
+
+Generic Structure:
+
+1. Thesis
+
+
+2. Arguments
+
+
+3. Recommendation (saran/ajakan)
+
+
+
+Ciri utama: Ada bagian recommendation di akhir.
+
+9, 21, 28. Expressions of Opinion
+
+Contoh:
+
+I think...
+
+I believe...
+
+In my opinion...
+
+From my point of view...
+
+
+10, 22, 40. Suggestion in Dialogue
+
+Contoh: A: I'm tired of studying. B: Why don't you take a break?
+
+11. Agreement and Disagreement
+
+Agreement (setuju):
+
+I agree.
+
+That's true.
+
+Exactly.
+
+I couldn't agree more.
+
+
+Disagreement (tidak setuju):
+
+I disagree.
+
+I don't think so.
+
+I'm afraid I can't agree.
+
+That's not always true.
+
+
+12. Purpose of Formal Invitation
+
+➡️ Untuk mengundang seseorang menghadiri acara resmi.
+
+25. Vocabulary in Formal Invitation
+
+Kata-kata yang sering muncul:
+
+Invite
+
+Attend
+
+Ceremony
+
+Celebration
+
+Venue
+
+RSVP
+
+Honored
+
+
+
+---
+
+✍️ Materi Essay
+
+1. Asking and Giving Opinion (Dialogue)
+
+Contoh:
+
+> Rina: What do you think about online learning?
+Doni: In my opinion, online learning is useful because we can study anywhere.
+
+
+
+2. Formal Invitation Text
+
+Contoh:
+
+> GRADUATION CEREMONY
+Dear Students,
+We would like to invite you to our graduation ceremony.
+Date: June 20, 2026
+Time: 09.00 a.m.
+Place: School Hall
+We are looking forward to your presence.
+Sincerely,
+The Committee
+
+
+
+3. Difference between Analytical and Hortatory Exposition
+
+Analytical Exposition	Hortatory Exposition
+
+Bertujuan meyakinkan pembaca	Bertujuan mengajak pembaca bertindak
+Akhirnya berupa reiteration	Akhirnya berupa recommendation
+Tidak memberi saran langsung	Memberi saran atau ajakan
+
+
+4. Cause and Effect Sentences
+
+Contoh:
+
+Because it was raining, we stayed at home.
+
+She studied hard, so she passed the exam.
+
+The road was flooded; therefore, the traffic was slow.
+
+
+5. Personal Letter about Holiday Experience
+
+Contoh singkat:
+
+> Dear Sarah,
+How are you? Last holiday, I went to the beach with my family. We played in the sand and watched the sunset. It was a wonderful experience, and I hope we can go together someday.
+Best wishes,
+Agus
+
+
+
+🔥 Yang paling sering keluar biasanya:
+
+1. Asking & Giving Opinion
+
+
+2. Suggestion
+
+
+3. Cause and Effect
+
+
+4. Formal Invitation
+
+
+5. Personal Letter
+
+
+6. Analytical vs Hortatory Exposition (perbedaan & struktur)
+
+
+
+Kalau mau belajar lebih cepat, hafalin saja pola-pola kalimat seperti "I think...", "What do you think?", "You should...", "because", "so", "therefore", serta perbedaan utama Analytical = Reiteration dan Hortatory = Recommendation.
